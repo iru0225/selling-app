@@ -64,6 +64,9 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        //
+        Order::where('id', $order->id)->delete();
+        return $data = DB::table('customers')
+            ->join('orders', 'orders.customer_id', 'customers.id')
+            ->get();
     }
 }

@@ -15,8 +15,6 @@ const Orders = () => {
   const { orders } = useAppSelector(orderSelector)
   const { customers } = useAppSelector(customerSelector)
 
-  console.log(orders);
-
   useEffect(() => {
     dispatch(customerAction.getAllCustomers())
     dispatch(orderAction.getOrders())
@@ -52,6 +50,9 @@ const Orders = () => {
       }
       
       navigate('/create-order', { state })
+    }
+    if(id === 'delete') {
+      dispatch(orderAction.deleteOrder({ id: value || '' }))
     }
   }
 

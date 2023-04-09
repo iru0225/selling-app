@@ -14,3 +14,17 @@ export const getOrdersApi = async () => {
     return
   }
 }
+
+export const deleteOrderApi = async (id: string) => {
+  try {
+    const response = await axios({
+      method: 'DELETE',
+      url: `${import.meta.env.VITE_API_BASE_URL}/order/${id}`,
+    })
+    return {
+      orders: JSON.parse(response.data.replace('ls', ''))
+    }
+  } catch (error) {
+    return
+  }
+}

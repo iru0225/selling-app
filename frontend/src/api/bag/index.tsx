@@ -21,7 +21,7 @@ export const getBagByIdApi = async (id:string) => {
     const response = await axios({
       method: 'GET',
       url: `${import.meta.env.VITE_API_BASE_URL}/bag/${id}`,
-    })    
+    })
     return {
       bag: JSON.parse(response.data.replace('ls', ''))
     }

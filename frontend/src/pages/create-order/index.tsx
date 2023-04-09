@@ -18,9 +18,10 @@ const CreateOrder = () => {
 
   useEffect(() => {
     if (location.state) {
-      dispatch(bagAction.getBagById(location.state.order_id))
+      const id = location.state.order_id
+      dispatch(bagAction.getBagById({ id }))
     }
-  }, [])
+  }, [location])
 
   const handleClick = (id: string, qty: number) => {
     const payload: {
