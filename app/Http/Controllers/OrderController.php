@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -12,7 +13,10 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $data = DB::table('customers')
+            ->join('orders', 'orders.customer_id', 'customers.id')
+            ->get();
+        return $data;
     }
 
     /**

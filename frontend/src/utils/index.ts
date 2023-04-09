@@ -65,3 +65,13 @@ export const sortData = (data: BodyType[], key: string, sort: SORT_TYPE) => {
   })
   return newData
 }
+
+export const showCurrency = (data?: number) => {
+  let currency = ''
+
+  if (data) {
+    currency = `Rp. ${new Intl.NumberFormat('id-ID').format(data)}`
+  }
+
+  return currency
+}

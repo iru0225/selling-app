@@ -8,6 +8,20 @@ use Illuminate\Support\Str;
 
 class BagController extends Controller
 {
+    public function getBagById(string $id) {
+        $order = DB::table('orders')->where('id', $id)->first();
+        $bag = DB::table('order_items')
+            ->where('order_id', $order->id)
+            ->join('items', 'items.id', 'order_items.item_id')
+            ->get();
+
+        return $data = [
+            'id' => $order->id,
+            'customer_id' => $order->customer_id,
+            'products' => $bag
+        ];
+    }
+
     public function createOrUpdateBag(Request $request) {
         $order = DB::table('orders');
         $bag = DB::table('order_items');
@@ -55,24 +69,32 @@ class BagController extends Controller
 
             return $data;
         } else {
-            $bag->where('order_id', $request->id)->where('item_id', $request->product['id'])->first();
+            $bag = DB::table('order_items')
+                ->where('order_id', $request->id)
+                ->where('item_id', $request->product['id'])
+                ->get();
             $total = 0;
             $qty = 0;
 
-            return($bag);
-
-            if (empty($bag)) {
-                DB::table('order_items')
+            if (count($bag) > 0) {
+                if ($request->product['qty'] > 0) {
+                    DB::table('order_items')
                     ->where('order_id', $request->id)
-                    ->where('order_id', $request->product['id'])
+                    ->where('item_id', $request->product['id'])
                     ->update([
                         'qty' => $request->product['qty'],
                         'total' => $request->product['qty'] * $item->price
-                    ]);                
+                    ]);
+                } else {
+                    DB::table('order_items')
+                        ->where('order_id', $request->id)
+                        ->where('item_id', $request->product['id'])
+                        ->delete();                
+                }
             } else {
                 DB::table('order_items')->insert([
                     'id' => Str::uuid(),
-                    'order_id' => $request->$id,
+                    'order_id' => $request->id,
                     'item_id' => $request->product['id'],
                     'qty' => $request->product['qty'],
                     'price' => $item->price,
@@ -83,23 +105,24 @@ class BagController extends Controller
             }
 
             $bag = DB::table('order_items')
-                ->where('order_id', $request->id)
                 ->join('items', 'items.id', 'order_items.item_id')
+                ->where('order_id', $request->id)
                 ->get();
-
-            $order = DB::table('orders')
-                ->where('id', $request->id)
-                ->update([
-                    'subtotal' => $total,
-                    'total' => $total,
-                    'qty' => $qty
-                ])->first();
 
             for ($i=0; $i < count($bag); $i++) { 
                 $total = $total + $bag[$i]->total;
                 $qty = $qty + $bag[$i]->qty;
             }
 
+            DB::table('orders')
+                ->where('id', $request->id)
+                ->update([
+                    'subtotal' => $total,
+                    'total' => $total
+                ]);
+
+
+            $order = DB::table('orders')->where('id', $request->id)->first();
             $data = [
                 'id' => $order->id,
                 'customer_id' => $order->customer_id,

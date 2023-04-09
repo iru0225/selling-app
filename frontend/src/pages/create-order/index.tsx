@@ -4,16 +4,22 @@ import { productAction, productSelector } from '../../redux/products.slice';
 import { Container, Wrapper } from './styled';
 import ProductItem from '../../components/product';
 import { bagAction, bagSelector } from '../../redux/bag.slice';
+import { useLocation } from 'react-router-dom';
 
 const CreateOrder = () => {
   const dispatch = useAppDispatch()
+  const location = useLocation()
   const { products } = useAppSelector(productSelector)
   const { bag } = useAppSelector(bagSelector)
 
-  console.log(bag);
-
   useEffect(() => {
     dispatch(productAction.getAllItems())
+  }, [])
+
+  useEffect(() => {
+    if (location.state) {
+      dispatch(bagAction.getBagById(location.state.order_id))
+    }
   }, [])
 
   const handleClick = (id: string, qty: number) => {
@@ -25,14 +31,23 @@ const CreateOrder = () => {
       id,
       qty
     }
-    payload.customer_id = '98e397a1-ca1b-4832-98cf-b8b3d9efaadb'
-    console.log(bag.id);
+    payload.customer_id = location.state.customer_id || '98e397a1-ca1b-4832-98cf-b8b3d9efaadb'
     
-    payload.id = bag ? bag.id : ''
+    payload.id = location.state.order_id || bag && bag.id || ''
 
     dispatch(bagAction.createOrUpdateBag(payload))
   }
 
+
+  const setQty = (id: string, data: object) => {
+    let qty = 0;
+    
+    if (Object.keys(data).length > 0) {
+      qty = data.products?.find((item) => item.item_id === id)?.qty
+    }
+    
+    return qty || 0
+  }
 
   return(
     <Container>
@@ -46,7 +61,7 @@ const CreateOrder = () => {
               label={item.name}
               price={item.price}
               onClick={handleClick}
-              qty={0}
+              qty={setQty(item.id, bag)}
             />
           ))
         }

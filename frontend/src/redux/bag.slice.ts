@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createOrUpdateBagApi } from '../api/bag';
+import { createOrUpdateBagApi, getBagByIdApi } from '../api/bag';
 import { RootState } from '../state/store';
 
 const createOrUpdateBag = createAsyncThunk<
@@ -21,6 +21,20 @@ const createOrUpdateBag = createAsyncThunk<
   }
 )
 
+const getBagById = createAsyncThunk<
+  any,
+  { 
+    id: string,
+  },
+  {state: RootState}
+>(
+  'bag/id',
+  async ({ id }) => {
+    const response = await getBagByIdApi(id)
+    return response
+  }
+)
+
 interface BagState {
   bag: {}
 }
@@ -38,13 +52,18 @@ export const bagSlice = createSlice({
       ...state,
       ...action.payload
     }))
+    builder.addCase(getBagById.fulfilled, (state, action) => ({
+      ...state,
+      ...action.payload
+    }))
   }
 })
 
 const { actions } = bagSlice
 export const bagAction = {
   ...actions,
-  createOrUpdateBag
+  createOrUpdateBag,
+  getBagById
 }
 
 export const bagSelector = ({ bag }: RootState): BagState => bag

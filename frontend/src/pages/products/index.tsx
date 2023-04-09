@@ -4,7 +4,7 @@ import { Container, Header, ImageWrapper, ProductDetail, ProductWrapper, TextTit
 import FormComponent from "../../components/form"
 import Button from "../../components/button"
 import { FORM_INPUT, PRODUCT_HEADER } from "./constants"
-import { mapBodyTable } from "../../utils"
+import { mapBodyTable, showCurrency } from "../../utils"
 import { useAppDispatch, useAppSelector } from "../../hooks"
 import { productAction, productSelector } from "../../redux/products.slice"
 import Modal from "../../components/modal"
@@ -131,16 +131,6 @@ const Products = () => {
         setProduct(() => products.find((item) => item.id === value))
         return viewProduct(value || '')
     }
-  }
-
-  const showCurrency = (data?: number) => {
-    let currency = ''
-
-    if (data) {
-      currency = `Rp. ${new Intl.NumberFormat('id-ID').format(data)}`
-    }
-
-    return currency
   }
 
   const convertPrice = (data: ProductType[]) => {

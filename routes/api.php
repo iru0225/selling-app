@@ -5,6 +5,7 @@ use App\Http\Controllers\ItemController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BagController;
+use App\Http\Controllers\OrderController;
  
 
 /*
@@ -24,7 +25,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::resources([
     'customer'=> CustomerController::class,
-    'item'=> ItemController::class
+    'item'=> ItemController::class,
+    'order' => OrderController::class
 ]);
+
 Route::post('/bag', [BagController::class, 'createOrUpdateBag']);
+Route::get('/bag/{id}', [BagController::class, 'getBagById']);
 
