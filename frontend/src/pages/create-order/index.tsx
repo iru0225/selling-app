@@ -32,9 +32,9 @@ const CreateOrder = () => {
       id,
       qty
     }
-    payload.customer_id = location.state.customer_id || '98e397a1-ca1b-4832-98cf-b8b3d9efaadb'
+    payload.customer_id = location?.state?.customer_id || '98e397a1-ca1b-4832-98cf-b8b3d9efaadb'
     
-    payload.id = location.state.order_id || bag && bag.id || ''
+    payload.id = location?.state?.order_id || bag && bag?.id || ''
 
     dispatch(bagAction.createOrUpdateBag(payload))
   }
